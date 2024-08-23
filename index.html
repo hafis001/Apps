@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TappyCoin</title>
     <style>
+        /* Include existing CSS styles here */
         body {
             background-color: #f0f8ff;
             color: #333;
@@ -264,8 +265,21 @@
 <script>
     let points = 0;
     let level = 1;
-    let progress = 0;
     const progressIncrement = 10; // Points needed to level up
+
+    // Initialize game state from localStorage
+    function loadGameState() {
+        const savedPoints = localStorage.getItem('points');
+        const savedLevel = localStorage.getItem('level');
+        if (savedPoints !== null) points = parseInt(savedPoints, 10);
+        if (savedLevel !== null) level = parseInt(savedLevel, 10);
+        updateUI();
+    }
+
+    function saveGameState() {
+        localStorage.setItem('points', points);
+        localStorage.setItem('level', level);
+    }
 
     function startGame() {
         const phone = document.getElementById('phone').value;
@@ -273,6 +287,7 @@
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('game').style.display = 'block';
             updateDateTime();
+            loadGameState(); // Load saved game state
         }
     }
 
@@ -282,6 +297,7 @@
             levelUp();
         }
         updateUI();
+        saveGameState(); // Save game state after update
     }
 
     function updateUI() {
@@ -293,7 +309,6 @@
 
     function levelUp() {
         level++;
-        progress = 0; // Reset progress
         updateUI();
     }
 
@@ -327,6 +342,9 @@
         // Example function for completing a task
         alert(`Task ${taskNumber} completed!`);
         // Add bonus points or other logic here
+        points += 1000; // Example bonus points
+        updateUI();
+        saveGameState(); // Save game state after task completion
     }
 
     function referFriend() {
@@ -352,6 +370,8 @@
     }
 
     setInterval(updateDateTime, 1000); // Update time every second
+
+    window.onload = loadGameState; // Load game state when page loads
 </script>
 </body>
 </html>
