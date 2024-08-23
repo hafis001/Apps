@@ -13,18 +13,6 @@
             margin: 0;
             padding: 0;
             user-select: none; /* Prevent text selection */
-            -webkit-user-select: none; /* Prevent text selection in WebKit browsers */
-            -moz-user-select: none; /* Prevent text selection in Firefox */
-            -ms-user-select: none; /* Prevent text selection in IE/Edge */
-        }
-
-        /* Disable right-click context menu */
-        body {
-            -webkit-touch-callout: none; /* iOS Safari */
-            -webkit-user-select: none; /* Safari */
-            -moz-user-select: none; /* Firefox */
-            -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version */
         }
 
         #overlay, #game, #shop, #bonus, #referral {
@@ -259,241 +247,111 @@
             <p>Points: 1,000</p>
             <button onclick="completeTask(6)">Complete Task</button>
         </div>
-        <div class="task-card" id="task7">
-            <h3>Install App</h3>
-            <p>Points: 1,000</p>
-            <button onclick="completeTask(7)">Complete Task</button>
-        </div>
     </div>
     <button class="button" onclick="closeBonus()">Close Bonus</button>
 </div>
 
 <div id="referral">
     <h2>Refer a Friend</h2>
-    <p>Share this link to refer a friend:</p>
-    <input type="text" id="referral-link" readonly>
-    <p>Clicks: <span id="clicks">0</span></p>
-    <p>Referred Users: <span id="referred-users">0</span></p>
-    <button class="button" onclick="closeReferral()">Close</button>
+    <form id="referral-form" onsubmit="refer(); return false;">
+        <label for="referral-phone">Enter Referral's Phone Number:</label><br>
+        <input type="tel" id="referral-phone" name="referral-phone" pattern="[0-9]{10}" placeholder="Enter referral's phone number" required><br>
+        <input type="submit" value="Refer">
+    </form>
+    <button class="button" onclick="closeReferral()">Close Referral</button>
 </div>
 
 <script>
+    let points = 0;
+    let level = 1;
+    let progress = 0;
+    const progressIncrement = 10; // Points needed to level up
+
     function startGame() {
-        var phoneNumber = document.getElementById("phone").value;
-        localStorage.setItem("phoneNumber", phoneNumber);
-        document.getElementById("overlay").style.display = "none";
-        document.getElementById("game").style.display = "block";
-        initializeGame();
-    }
-
-    function updateDateTime() {
-        var now = new Date();
-        var dateTimeString = now.toLocaleString();
-        document.getElementById("datetime").innerText = dateTimeString;
-    }
-
-    function initializeGame() {
-        var phoneNumber = localStorage.getItem("phoneNumber");
-        if (phoneNumber) {
-            document.getElementById("overlay").style.display = "none";
-            document.getElementById("game").style.display = "block";
+        const phone = document.getElementById('phone').value;
+        if (phone) {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('game').style.display = 'block';
             updateDateTime();
         }
-
-        var globalPoints = parseInt(localStorage.getItem("points")) || 0;
-        var points = parseInt(localStorage.getItem(phoneNumber + "_points")) || 0;
-        points = Math.max(globalPoints, points);
-
-        var level = parseInt(localStorage.getItem(phoneNumber + "_level")) || 1;
-
-        updateDisplay();
-        updateTaskStatus();
     }
 
     function clickButton() {
-        var phoneNumber = localStorage.getItem("phoneNumber");
-        var globalPoints = parseInt(localStorage.getItem("points")) || 0;
-        var points = parseInt(localStorage.getItem(phoneNumber + "_points")) || 0;
-        var level = parseInt(localStorage.getItem(phoneNumber + "_level")) || 1;
-
         points++;
-        globalPoints++;
-        localStorage.setItem("points", globalPoints);
-        localStorage.setItem(phoneNumber + "_points", points);
-
-        if (points >= level * 2000) {
+        if (points % progressIncrement === 0) {
             levelUp();
-        } else {
-            updateDisplay();
         }
+        updateUI();
+    }
+
+    function updateUI() {
+        document.getElementById('points').textContent = points;
+        document.getElementById('level').textContent = level;
+        const progressPercent = (points % progressIncrement) / progressIncrement * 100;
+        document.getElementById('progress').style.width = progressPercent + '%';
     }
 
     function levelUp() {
-        var phoneNumber = localStorage.getItem("phoneNumber");
-        var level = parseInt(localStorage.getItem(phoneNumber + "_level")) || 1;
-
         level++;
-        localStorage.setItem(phoneNumber + "_level", level);
-
-        alert("Congratulations! You reached level " + level);
-        document.getElementById("progress").style.width = "0%";
-        updateDisplay();
-    }
-
-    function updateDisplay() {
-        var phoneNumber = localStorage.getItem("phoneNumber");
-        var globalPoints = parseInt(localStorage.getItem("points")) || 0;
-        var points = parseInt(localStorage.getItem(phoneNumber + "_points")) || 0;
-        var level = parseInt(localStorage.getItem(phoneNumber + "_level")) || 1;
-
-        document.getElementById("points").innerText = points;
-        document.getElementById("level").innerText = level;
-
-        var progress = (points % (level * 2000)) / (level * 2000) * 100;
-        document.getElementById("progress").style.width = progress + "%";
+        progress = 0; // Reset progress
+        updateUI();
     }
 
     function openShop() {
-        document.getElementById("game").style.display = "none";
-        document.getElementById("shop").style.display = "block";
-        updateCardLevels();
+        document.getElementById('shop').style.display = 'block';
     }
 
     function closeShop() {
-        var phoneNumber = localStorage.getItem("phoneNumber");
-        var points = parseInt(localStorage.getItem(phoneNumber + "_points")) || 0;
-        localStorage.setItem("points", points);
-        document.getElementById("points").innerText = points;
-        document.getElementById("game").style.display = "block";
-        document.getElementById("shop").style.display = "none";
-    }
-
-    function updateCardLevels() {
-        var phoneNumber = localStorage.getItem("phoneNumber");
-        for (var i = 1; i <= 4; i++) {
-            var cardLevel = parseInt(localStorage.getItem(phoneNumber + "_card_" + i + "_level")) || 0;
-            document.getElementById("card" + i + "-level").innerText = cardLevel;
-        }
+        document.getElementById('shop').style.display = 'none';
     }
 
     function purchaseCard(cardNumber) {
-        var phoneNumber = localStorage.getItem("phoneNumber");
-        var cardCost = 1000;
-        var cardLevel = parseInt(localStorage.getItem(phoneNumber + "_card_" + cardNumber + "_level")) || 0;
-        var points = parseInt(localStorage.getItem(phoneNumber + "_points")) || 0;
-
-        if (points >= cardCost) {
-            points -= cardCost;
-            cardLevel++;
-            localStorage.setItem(phoneNumber + "_points", points);
-            localStorage.setItem(phoneNumber + "_card_" + cardNumber + "_level", cardLevel);
-            updateDisplay();
-            alert("Card " + cardNumber + " leveled up to level " + cardLevel + " successfully!");
-            document.getElementById("card" + cardNumber + "-level").innerText = cardLevel;
-        } else {
-            alert("Insufficient points to level up this card!");
-        }
+        // Example function for purchasing a card
+        alert(`Card ${cardNumber} purchased!`);
     }
 
     function withdraw() {
-        alert("Withdrawal feature coming soon!");
+        // Example function for withdrawing
+        alert('Withdrawal feature not implemented.');
     }
 
     function getBonus() {
-        document.getElementById("game").style.display = "none";
-        document.getElementById("bonus").style.display = "block";
+        document.getElementById('bonus').style.display = 'block';
     }
 
     function closeBonus() {
-        document.getElementById("game").style.display = "block";
-        document.getElementById("bonus").style.display = "none";
+        document.getElementById('bonus').style.display = 'none';
     }
 
-    function completeTask(taskId) {
-        var phoneNumber = localStorage.getItem("phoneNumber");
-        var completedTasks = JSON.parse(localStorage.getItem(phoneNumber + "_completedTasks")) || [];
-
-        if (!completedTasks.includes(taskId)) {
-            completedTasks.push(taskId);
-            localStorage.setItem(phoneNumber + "_completedTasks", JSON.stringify(completedTasks));
-
-            var points = parseInt(localStorage.getItem(phoneNumber + "_points")) || 0;
-            points += 1000;
-            localStorage.setItem(phoneNumber + "_points", points);
-
-            var globalPoints = parseInt(localStorage.getItem("points")) || 0;
-            globalPoints += 1000;
-            localStorage.setItem("points", globalPoints);
-
-            updateDisplay();
-            updateTaskStatus();
-            alert("Task " + taskId + " completed! You've earned 1,000 points.");
-        } else {
-            alert("Task " + taskId + " is already completed!");
-        }
-    }
-
-    function updateTaskStatus() {
-        var phoneNumber = localStorage.getItem("phoneNumber");
-        var completedTasks = JSON.parse(localStorage.getItem(phoneNumber + "_completedTasks")) || [];
-
-        for (var i = 1; i <= 7; i++) {
-            var taskCard = document.getElementById("task" + i);
-            if (completedTasks.includes(i)) {
-                taskCard.classList.add("completed");
-                taskCard.querySelector("button").innerText = "Completed";
-                taskCard.querySelector("button").disabled = true;
-            }
-        }
+    function completeTask(taskNumber) {
+        // Example function for completing a task
+        alert(`Task ${taskNumber} completed!`);
+        // Add bonus points or other logic here
     }
 
     function referFriend() {
-        document.getElementById("game").style.display = "none";
-        document.getElementById("referral").style.display = "block";
-        var phoneNumber = localStorage.getItem("phoneNumber");
-        var referralLink = "https://example.com/referral?ref=" + phoneNumber;
-        document.getElementById("referral-link").value = referralLink;
+        document.getElementById('referral').style.display = 'block';
     }
 
     function closeReferral() {
-        document.getElementById("game").style.display = "block";
-        document.getElementById("referral").style.display = "none";
+        document.getElementById('referral').style.display = 'none';
     }
 
-    function setReferralClicks(clicks) {
-        var phoneNumber = localStorage.getItem("phoneNumber");
-        localStorage.setItem(phoneNumber + "_referral_clicks", clicks);
-        document.getElementById("clicks").innerText = clicks;
-    }
-
-    function setReferredUsers(count) {
-        var phoneNumber = localStorage.getItem("phoneNumber");
-        localStorage.setItem(phoneNumber + "_referred_users", count);
-        document.getElementById("referred-users").innerText = count;
-    }
-
-    window.addEventListener('contextmenu', function(event) {
-        event.preventDefault();
-        return false;
-    });
-
-    document.addEventListener('keydown', function(event) {
-        if (event.ctrlKey && (event.key === 's' || event.key === 'u' || event.key === 'p')) {
-            event.preventDefault();
+    function refer() {
+        const referralPhone = document.getElementById('referral-phone').value;
+        if (referralPhone) {
+            alert(`Referral made to ${referralPhone}!`);
+            document.getElementById('referral').style.display = 'none';
         }
-    });
+    }
 
-    document.addEventListener('dragstart', function(event) {
-        event.preventDefault();
-    });
+    function updateDateTime() {
+        const now = new Date();
+        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
+        document.getElementById('datetime').textContent = now.toLocaleString('en-US', options);
+    }
 
-    window.onbeforeunload = function() {
-        return "Are you sure you want to leave?";
-    };
-
-    updateDateTime();
-    setInterval(updateDateTime, 1000);
-
+    setInterval(updateDateTime, 1000); // Update time every second
 </script>
 </body>
 </html>
