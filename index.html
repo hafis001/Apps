@@ -3,41 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self';">
     <title>TappyCoin</title>
     <style>
         body {
-            background-color: #f0f8ff;
+            background-color: #f0f0f0;
             color: #333;
             text-align: center;
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            user-select: none; /* Prevent text selection */
-            -webkit-user-select: none; /* Prevent text selection in WebKit browsers */
-            -moz-user-select: none; /* Prevent text selection in Firefox */
-            -ms-user-select: none; /* Prevent text selection in IE/Edge */
-        }
-
-        /* Disable right-click context menu */
-        body {
-            -webkit-touch-callout: none; /* iOS Safari */
-            -webkit-user-select: none; /* Safari */
-            -moz-user-select: none; /* Firefox */
-            -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version */
-        }
-
-        #overlay, #game, #shop, #bonus, #referral {
-            display: none;
+            font-family: Arial, sans-serif;
         }
 
         #overlay {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.8);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -45,52 +27,42 @@
         }
 
         #overlay-content {
-            background-color: #ffffff;
-            padding: 30px;
+            background-color: #fff;
+            padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
         }
 
-        .button, .button-group button {
-            border-radius: 8px;
-            text-align: center;
-            background-color: #4caf50;
+        .button {
+            border-radius: 50%;
+            background-color: #4CAF50;
             color: white;
             cursor: pointer;
-            padding: 12px 24px;
-            margin: 10px;
-            font-size: 18px;
+            width: 200px;
+            height: 200px;
             border: none;
-            transition: background-color 0.3s;
+            font-size: 18px;
+            line-height: 200px;
         }
 
-        .button:hover, .button-group button:hover {
-            background-color: #45a049;
-        }
-
-        input[type="tel"], input[type="text"] {
-            width: 100%;
-            max-width: 320px;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
+        input[type="tel"] {
+            width: 200px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
             font-size: 16px;
-            margin-bottom: 10px;
         }
 
         input[type="submit"] {
-            padding: 12px 24px;
-            background-color: #4caf50;
+            padding: 10px 20px;
+            background-color: #4CAF50;
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 18px;
-            transition: background-color 0.3s;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #45a049;
+            margin-top: 10px;
+            font-size: 16px;
         }
 
         .progress-bar {
@@ -99,63 +71,61 @@
             background-color: #ddd;
             border-radius: 10px;
             overflow: hidden;
+            position: relative;
+            height: 25px;
         }
 
         .progress {
-            height: 20px;
-            background-color: #4caf50;
-            border-radius: 10px;
+            height: 100%;
+            background-color: #4CAF50;
+            width: 0;
             transition: width 0.5s ease-in-out;
         }
 
         .button-group {
             margin-top: 20px;
             display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .button-group button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
         }
 
         .shop-cards, .task-cards {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
+            justify-content: space-around;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
 
         .shop-card, .task-card {
-            border: 1px solid #ddd;
+            border: 1px solid #ccc;
             border-radius: 10px;
             padding: 20px;
-            width: 220px;
-            background-color: #ffffff;
-            color: #333;
+            width: 200px;
+            margin: 10px;
+            background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .shop-card h3, .task-card h3 {
             margin-bottom: 10px;
-            font-size: 18px;
         }
 
         .shop-card button, .task-card button {
             margin-top: 10px;
-            background-color: #4caf50;
-            color: white;
         }
 
-        .shop-card button:hover, .task-card button:hover {
-            background-color: #45a049;
-        }
-
-        .date-time {
+        #date-time {
+            margin: 20px 0;
             font-size: 18px;
-            margin-top: 10px;
-        }
-
-        .task-card.completed {
-            background-color: #e0ffe0;
-            border: 1px solid #4caf50;
         }
     </style>
 </head>
@@ -171,7 +141,7 @@
     </div>
 </div>
 
-<div id="game" style="display: block;">
+<div id="game" style="display: none;">
     <h1>TappyCoin</h1>
     <p>Points: <span id="points">0</span></p>
     <strong><p>Level: <span id="level">1</span></p></strong>
@@ -180,270 +150,178 @@
     </div>
     <button class="button" onclick="clickButton()">TAPPY</button>
 
-    <div class="date-time">
-        Date & Time: <span id="datetime"></span>
-    </div>
-
     <div class="button-group">
         <button onclick="openShop()">Shop</button>
         <button onclick="withdraw()">Withdraw</button>
         <button onclick="getBonus()">Bonus</button>
         <button onclick="referFriend()">Refer a Friend</button>
     </div>
+    <div id="date-time"></div>
 </div>
 
-<div id="shop">
+<div id="shop" style="display: none;">
     <h2>Shop</h2>
+    <p>Your Points: <span id="shop-points">0</span></p>
     <div class="shop-cards">
-        <div class="shop-card" id="card1">
-            <h3>Card 1</h3>
-            <p>Level: <span id="card1-level">0</span></p>
-            <button onclick="purchaseCard(1)">Purchase Card</button>
+        <div class="shop-card">
+            <h3>Card 1 (Level <span id="card1-level">0</span>)</h3>
+            <p>Value: 1000 points</p>
+            <button onclick="purchaseCard(1)">Level Up</button>
         </div>
-        <div class="shop-card" id="card2">
-            <h3>Card 2</h3>
-            <p>Level: <span id="card2-level">0</span></p>
-            <button onclick="purchaseCard(2)">Purchase Card</button>
+        <div class="shop-card">
+            <h3>Card 2 (Level <span id="card2-level">0</span>)</h3>
+            <p>Value: 1000 points</p>
+            <button onclick="purchaseCard(2)">Level Up</button>
         </div>
-        <div class="shop-card" id="card3">
-            <h3>Card 3</h3>
-            <p>Level: <span id="card3-level">0</span></p>
-            <button onclick="purchaseCard(3)">Purchase Card</button>
+        <div class="shop-card">
+            <h3>Card 3 (Level <span id="card3-level">0</span>)</h3>
+            <p>Value: 1000 points</p>
+            <button onclick="purchaseCard(3)">Level Up</button>
         </div>
-        <div class="shop-card" id="card4">
-            <h3>Card 4</h3>
-            <p>Level: <span id="card4-level">0</span></p>
-            <button onclick="purchaseCard(4)">Purchase Card</button>
+        <div class="shop-card">
+            <h3>Card 4 (Level <span id="card4-level">0</span>)</h3>
+            <p>Value: 1000 points</p>
+            <button onclick="purchaseCard(4)">Level Up</button>
         </div>
     </div>
-    <button class="button" onclick="closeShop()">Close Shop</button>
+    <button onclick="closeShop()">Close Shop</button>
 </div>
 
-<div id="bonus">
+<div id="bonus" style="display: none;">
     <h2>Bonus</h2>
-    <p>Complete the tasks below to earn bonus points:</p>
+    <p>Completed Tasks: <span id="completed-tasks">0</span></p>
     <div class="task-cards">
-        <div class="task-card" id="task1">
+        <div class="task-card">
             <h3>Task 1</h3>
             <p>Points: 1,000</p>
             <button onclick="completeTask(1)">Complete Task</button>
         </div>
-        <div class="task-card" id="task2">
+        <div class="task-card">
             <h3>Task 2</h3>
             <p>Points: 1,000</p>
             <button onclick="completeTask(2)">Complete Task</button>
         </div>
-        <div class="task-card" id="task3">
+        <div class="task-card">
             <h3>Task 3</h3>
             <p>Points: 1,000</p>
             <button onclick="completeTask(3)">Complete Task</button>
         </div>
-        <div class="task-card" id="task4">
+        <div class="task-card">
             <h3>Task 4</h3>
             <p>Points: 1,000</p>
             <button onclick="completeTask(4)">Complete Task</button>
         </div>
-        <div class="task-card" id="task5">
+        <div class="task-card">
             <h3>Task 5</h3>
             <p>Points: 1,000</p>
             <button onclick="completeTask(5)">Complete Task</button>
         </div>
-        <div class="task-card" id="task6">
-            <h3>Task 6</h3>
+        <div class="task-card">
+            <h3>Watch</h3>
             <p>Points: 1,000</p>
             <button onclick="completeTask(6)">Complete Task</button>
         </div>
-        <div class="task-card" id="task7">
-            <h3>Install App</h3>
+        <div class="task-card">
+            <h3>Subscribe</h3>
             <p>Points: 1,000</p>
             <button onclick="completeTask(7)">Complete Task</button>
         </div>
     </div>
-    <button class="button" onclick="closeBonus()">Close Bonus</button>
+    <button onclick="closeBonus()">Close Bonus</button>
 </div>
 
-<div id="referral">
+<div id="referral" style="display: none;">
     <h2>Refer a Friend</h2>
-    <p>Share this link to refer a friend:</p>
+    <p>Referral Link:</p>
     <input type="text" id="referral-link" readonly>
     <p>Clicks: <span id="clicks">0</span></p>
     <p>Referred Users: <span id="referred-users">0</span></p>
-    <button class="button" onclick="closereferFriend()">Close</button>
+    <button onclick="closeReferFriend()">Close</button>
 </div>
 
 <script>
+    let points = 0;
+    let level = 1;
+    let shopPoints = 0;
+    let cardLevels = [0, 0, 0, 0];
+    let completedTasks = 0;
+
     function startGame() {
-        var phoneNumber = document.getElementById("phone").value;
-        localStorage.setItem("phoneNumber", phoneNumber);
-        document.getElementById("overlay").style.display = "none";
-        document.getElementById("game").style.display = "block";
-        initializeGame();
-    }
-
-    function updateDateTime() {
-        var now = new Date();
-        var dateTimeString = now.toLocaleString();
-        document.getElementById("datetime").innerText = dateTimeString;
-    }
-
-    var phoneNumber = localStorage.getItem("phoneNumber");
-
-    if (phoneNumber) {
-        document.getElementById("overlay").style.display = "none";
-        document.getElementById("game").style.display = "block";
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('game').style.display = 'block';
         updateDateTime();
+        setInterval(updateDateTime, 1000);
     }
-
-    var globalPoints = parseInt(localStorage.getItem("points")) || 0;
-    var points = parseInt(localStorage.getItem(phoneNumber + "_points")) || 0;
-    points = Math.max(globalPoints, points);
-
-    var level = parseInt(localStorage.getItem(phoneNumber + "_level")) || 1;
-
-    updateDisplay();
-    updateTaskStatus();
 
     function clickButton() {
-        points++;
-        globalPoints++;
-        updateDisplay();
-        localStorage.setItem("points", globalPoints);
-        localStorage.setItem(phoneNumber + "_points", points);
-        if (points >= level * 2000) {
-            levelUp();
-        }
-    }
-
-    function levelUp() {
-        level++;
-        localStorage.setItem(phoneNumber + "_level", level);
-        alert("Congratulations! You reached level " + level);
-        document.getElementById("progress").style.width = "0%";
-        updateDisplay();
-    }
-
-    function updateDisplay() {
-        document.getElementById("points").innerText = points;
-        document.getElementById("shop-points").innerText = points;
-        document.getElementById("level").innerText = level;
-
-        var progress = (points % (level * 2000)) / (level * 2000) * 100;
-        document.getElementById("progress").style.width = progress + "%";
-    }
-
-    function initializeGame() {
-        // Additional initialization steps if needed
+        points += level;
+        document.getElementById('points').innerText = points;
     }
 
     function openShop() {
-        document.getElementById("game").style.display = "none";
-        document.getElementById("shop").style.display = "block";
-        updateCardLevels();
+        document.getElementById('shop').style.display = 'block';
+        document.getElementById('shop-points').innerText = points;
     }
 
     function closeShop() {
-        globalPoints = points;
-        localStorage.setItem("points", globalPoints);
-        document.getElementById("points").innerText = globalPoints;
-        document.getElementById("game").style.display = "block";
-        document.getElementById("shop").style.display = "none";
-    }
-
-    function updateCardLevels() {
-        for (var i = 1; i <= 4; i++) {
-            var cardLevel = parseInt(localStorage.getItem(phoneNumber + "_card_" + i + "_level")) || 0;
-            document.getElementById("card" + i + "-level").innerText = cardLevel;
-        }
+        document.getElementById('shop').style.display = 'none';
     }
 
     function purchaseCard(cardNumber) {
-        var cardCost = 1000;
-        var cardLevel = parseInt(localStorage.getItem(phoneNumber + "_card_" + cardNumber + "_level")) || 0;
-
-        if (points >= cardCost) {
-            points -= cardCost;
-            cardLevel++;
-            localStorage.setItem(phoneNumber + "_points", points);
-            localStorage.setItem(phoneNumber + "_card_" + cardNumber + "_level", cardLevel);
-            updateDisplay();
-            alert("Card " + cardNumber + " leveled up to level " + cardLevel + " successfully!");
-            document.getElementById("card" + cardNumber + "-level").innerText = cardLevel;
+        const cardIndex = cardNumber - 1;
+        const cardPrice = 1000;
+        if (points >= cardPrice) {
+            points -= cardPrice;
+            cardLevels[cardIndex]++;
+            document.getElementById('points').innerText = points;
+            document.getElementById(`card${cardNumber}-level`).innerText = cardLevels[cardIndex];
         } else {
-            alert("Insufficient points to level up this card!");
+            alert('Not enough points!');
         }
     }
 
     function withdraw() {
-        alert("Withdrawal feature coming soon!");
+        alert('Withdrawal feature is not implemented yet.');
     }
 
     function getBonus() {
-        document.getElementById("game").style.display = "none";
-        document.getElementById("bonus").style.display = "block";
+        document.getElementById('bonus').style.display = 'block';
     }
 
     function closeBonus() {
-        document.getElementById("game").style.display = "block";
-        document.getElementById("bonus").style.display = "none";
+        document.getElementById('bonus').style.display = 'none';
     }
 
-    function completeTask(taskId) {
-        var completedTasks = JSON.parse(localStorage.getItem(phoneNumber + "_completedTasks")) || [];
-        if (!completedTasks.includes(taskId)) {
-            completedTasks.push(taskId);
-            localStorage.setItem(phoneNumber + "_completedTasks", JSON.stringify(completedTasks));
-            points += 1000;
-            globalPoints += 1000;
-            updateDisplay();
-            localStorage.setItem("points", globalPoints);
-            localStorage.setItem(phoneNumber + "_points", points);
-            updateTaskStatus();
-            alert("Task " + taskId + " completed! You've earned 1,000 points.");
-        } else {
-            alert("Task " + taskId + " is already completed!");
-        }
-    }
-
-    function updateTaskStatus() {
-        var completedTasks = JSON.parse(localStorage.getItem(phoneNumber + "_completedTasks")) || [];
-        document.getElementById("completed-tasks").innerText = completedTasks.length;
-
-        // Highlight completed tasks
-        for (var i = 1; i <= 7; i++) {
-            var taskCard = document.getElementById("task" + i);
-            if (completedTasks.includes(i)) {
-                taskCard.classList.add("completed");
-                taskCard.querySelector("button").innerText = "Completed";
-                taskCard.querySelector("button").disabled = true;
-            }
-        }
+    function completeTask(taskNumber) {
+        completedTasks++;
+        points += 1000;
+        document.getElementById('completed-tasks').innerText = completedTasks;
+        document.getElementById('points').innerText = points;
     }
 
     function referFriend() {
-        document.getElementById("game").style.display = "none";
-        document.getElementById("referral").style.display = "block";
-        var referralLink = "https://example.com/referral?ref=" + phoneNumber;
-        document.getElementById("referral-link").value = referralLink;
+        document.getElementById('referral').style.display = 'block';
+        const referralLink = `${window.location.href}?ref=${Math.random().toString(36).substr(2, 9)}`;
+        document.getElementById('referral-link').value = referralLink;
     }
 
     function closeReferFriend() {
-        document.getElementById("game").style.display = "block";
-        document.getElementById("referral").style.display = "none";
+        document.getElementById('referral').style.display = 'none';
     }
 
-    function setReferralClicks(clicks) {
-        localStorage.setItem(phoneNumber + "_referral_clicks", clicks);
-        document.getElementById("clicks").innerText = clicks;
+    function updateDateTime() {
+        const now = new Date();
+        const dateTimeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+        document.getElementById('date-time').innerText = dateTimeString;
     }
 
-    function setReferredUsers(count) {
-        localStorage.setItem(phoneNumber + "_referred_users", count);
-        document.getElementById("referred-users").innerText = count;
-    }
-
-    window.addEventListener('contextmenu', function(event) {
+    // Prevent right-click, drag-and-drop, and key shortcuts
+    document.addEventListener('contextmenu', function(event) {
         event.preventDefault();
-        return false;
+    });
+
+    document.addEventListener('dragstart', function(event) {
+        event.preventDefault();
     });
 
     document.addEventListener('keydown', function(event) {
@@ -452,17 +330,19 @@
         }
     });
 
-    document.addEventListener('dragstart', function(event) {
-        event.preventDefault();
+    // Detect developer tools
+    setInterval(function() {
+        if (window.devtoolsDetected) {
+            window.devtoolsDetected = false;
+            alert("Developer tools are detected!");
+        }
+    }, 1000);
+
+    window.addEventListener('resize', function() {
+        if (window.outerWidth - window.innerWidth > 160) {
+            window.devtoolsDetected = true;
+        }
     });
-
-    window.onbeforeunload = function() {
-        return "Are you sure you want to leave?";
-    };
-
-    updateDateTime();
-    setInterval(updateDateTime, 1000);
-
 </script>
 </body>
 </html>
