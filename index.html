@@ -12,10 +12,10 @@
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            user-select: none; /* Prevent text selection */
+            user-select: none;
         }
 
-        #overlay, #game, #shop, #bonus, #referral, #leaderboard {
+        #overlay, #game, #shop, #bonus, #referral, #leaderboard, #dialog {
             display: none;
         }
 
@@ -183,6 +183,26 @@
         #leaderboard tr:nth-child(even) {
             background-color: #f2f2f2;
         }
+
+        #dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            max-width: 90%;
+            width: 300px;
+        }
+
+        #dialog .close {
+            float: right;
+            font-size: 20px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -252,16 +272,19 @@
             <h3>Task 1 - Click 100 times</h3>
             <p>Reward: 1000 Points</p>
             <button onclick="completeTask(1)">Complete Task</button>
+            <div id="timer-task1" class="timer">Timer: <span id="timer-task1-span">00:00</span></div>
         </div>
         <div class="task-card" id="task2">
             <h3>Task 2 - Reach Level 5</h3>
             <p>Reward: 2000 Points</p>
             <button onclick="completeTask(2)">Complete Task</button>
+            <div id="timer-task2" class="timer">Timer: <span id="timer-task2-span">00:00</span></div>
         </div>
         <div class="task-card" id="task3">
             <h3>Task 3 - Click 500 times</h3>
             <p>Reward: 5000 Points</p>
             <button onclick="completeTask(3)">Complete Task</button>
+            <div id="timer-task3" class="timer">Timer: <span id="timer-task3-span">00:00</span></div>
         </div>
     </div>
     <button class="button" onclick="closeBonus()">Close Bonus</button>
@@ -294,23 +317,42 @@
     <button class="button" onclick="closeLeaderboard()">Close Leaderboard</button>
 </div>
 
+<div id="dialog">
+    <span class="close" onclick="closeDialog()">×</span>
+    <p id="dialog-message">Message goes here</p>
+</div>
+
 <script>
     let points = 0;
     let level = 1;
+    let clickMultiplier = 1;
     const progressIncrement = 10; // Points needed to level up
     const upgradeCosts = [100, 500, 1000, 5000]; // Example upgrade costs
+    const taskTimers = [30000, 60000, 90000]; // Example timers for tasks in milliseconds
+    const completedTasks = [];
 
     function loadGameState() {
         const savedPoints = localStorage.getItem('points');
         const savedLevel = localStorage.getItem('level');
-        if (savedPoints !== null) points = parseInt(savedPoints, 10);
-        if (savedLevel !== null) level = parseInt(savedLevel, 10);
-        updateUI();
+        const savedClickMultiplier = localStorage.getItem('clickMultiplier');
+        const loggedIn = localStorage.getItem('loggedIn');
+        
+        if (!loggedIn) {
+            document.getElementById('overlay').style.display = 'flex';
+        } else {
+            document.getElementById('game').style.display = 'block';
+            if (savedPoints !== null) points = parseInt(savedPoints, 10);
+            if (savedLevel !== null) level = parseInt(savedLevel, 10);
+            if (savedClickMultiplier !== null) clickMultiplier = parseFloat(savedClickMultiplier);
+            updateUI();
+        }
     }
 
     function saveGameState() {
         localStorage.setItem('points', points);
         localStorage.setItem('level', level);
+        localStorage.setItem('clickMultiplier', clickMultiplier);
+        localStorage.setItem('loggedIn', 'true');
     }
 
     function startGame() {
@@ -318,13 +360,12 @@
         if (phone) {
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('game').style.display = 'block';
-            updateDateTime();
             loadGameState();
         }
     }
 
     function clickButton() {
-        points++;
+        points += clickMultiplier;
         if (points % progressIncrement === 0) {
             levelUp();
         }
@@ -341,6 +382,11 @@
 
     function levelUp() {
         level++;
+        // Adjust difficulty for leveling up
+        if (level % 5 === 0) {
+            // Increase points needed per level
+            progressIncrement += 10;
+        }
         updateUI();
     }
 
@@ -356,34 +402,57 @@
         const cost = upgradeCosts[cardNumber - 1];
         if (points >= cost) {
             points -= cost;
-            // Apply the upgrade logic here (e.g., increase points per click)
-            alert(`Card ${cardNumber} purchased! Now you earn ${pointsPerClick} points per click.`);
+            clickMultiplier = pointsPerClick;
+            showDialog(`Card ${cardNumber} purchased! Now you earn ${pointsPerClick} points per click.`);
             updateUI();
             saveGameState();
         } else {
-            alert('Not enough points to purchase this card.');
+            showDialog('Not enough points to purchase this card.');
         }
     }
 
     function withdraw() {
-        alert('Withdrawal feature not implemented.');
+        showDialog('Withdrawal feature not implemented.');
     }
 
     function getBonus() {
         document.getElementById('bonus').style.display = 'block';
+        startBonusTimers();
     }
 
     function closeBonus() {
         document.getElementById('bonus').style.display = 'none';
     }
 
+    function startBonusTimers() {
+        // Example timers for bonus tasks
+        const timers = [
+            setTimeout(() => updateTaskTimer(1), taskTimers[0]),
+            setTimeout(() => updateTaskTimer(2), taskTimers[1]),
+            setTimeout(() => updateTaskTimer(3), taskTimers[2])
+        ];
+
+        // Function to update task timer
+        function updateTaskTimer(taskNumber) {
+            const taskCard = document.getElementById(`task${taskNumber}`);
+            const timerSpan = document.getElementById(`timer-task${taskNumber}-span`);
+            taskCard.classList.add('completed');
+            timerSpan.textContent = '00:00';
+            showDialog(`Task ${taskNumber} timer completed!`);
+        }
+    }
+
     function completeTask(taskNumber) {
-        // Add bonus points or other logic here
-        const rewards = [1000, 2000, 5000];
-        points += rewards[taskNumber - 1];
-        document.getElementById(`task${taskNumber}`).classList.add('completed');
-        updateUI();
-        saveGameState();
+        if (!completedTasks.includes(taskNumber)) {
+            const rewards = [1000, 2000, 5000];
+            points += rewards[taskNumber - 1];
+            completedTasks.push(taskNumber);
+            document.getElementById(`task${taskNumber}`).classList.add('completed');
+            updateUI();
+            saveGameState();
+        } else {
+            showDialog('Task already completed.');
+        }
     }
 
     function referFriend() {
@@ -397,7 +466,7 @@
     function refer() {
         const referralPhone = document.getElementById('referral-phone').value;
         if (referralPhone) {
-            alert(`Referral made to ${referralPhone}!`);
+            showDialog(`Referral made to ${referralPhone}!`);
             document.getElementById('referral').style.display = 'none';
         }
     }
@@ -433,6 +502,15 @@
             tr.innerHTML = `<td>${entry.rank}</td><td>${entry.player}</td><td>${entry.points}</td>`;
             tbody.appendChild(tr);
         });
+    }
+
+    function showDialog(message) {
+        document.getElementById('dialog-message').textContent = message;
+        document.getElementById('dialog').style.display = 'block';
+    }
+
+    function closeDialog() {
+        document.getElementById('dialog').style.display = 'none';
     }
 
     setInterval(updateDateTime, 1000);
