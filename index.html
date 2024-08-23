@@ -18,6 +18,15 @@
             -ms-user-select: none; /* Prevent text selection in IE/Edge */
         }
 
+        /* Disable right-click context menu */
+        body {
+            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version */
+        }
+
         #overlay, #game, #shop, #bonus, #referral {
             display: none;
         }
@@ -185,27 +194,26 @@
 
 <div id="shop">
     <h2>Shop</h2>
-    <p>Your Points: <span id="shop-points">0</span></p>
     <div class="shop-cards">
-        <div class="shop-card">
-            <h3>Card 1 (Level <span id="card1-level">0</span>)</h3>
-            <p>Value: 1,000 points</p>
-            <button onclick="purchaseCard(1)">Level Up</button>
+        <div class="shop-card" id="card1">
+            <h3>Card 1</h3>
+            <p>Level: <span id="card1-level">0</span></p>
+            <button onclick="purchaseCard(1)">Purchase Card</button>
         </div>
-        <div class="shop-card">
-            <h3>Card 2 (Level <span id="card2-level">0</span>)</h3>
-            <p>Value: 1,000 points</p>
-            <button onclick="purchaseCard(2)">Level Up</button>
+        <div class="shop-card" id="card2">
+            <h3>Card 2</h3>
+            <p>Level: <span id="card2-level">0</span></p>
+            <button onclick="purchaseCard(2)">Purchase Card</button>
         </div>
-        <div class="shop-card">
-            <h3>Card 3 (Level <span id="card3-level">0</span>)</h3>
-            <p>Value: 1,000 points</p>
-            <button onclick="purchaseCard(3)">Level Up</button>
+        <div class="shop-card" id="card3">
+            <h3>Card 3</h3>
+            <p>Level: <span id="card3-level">0</span></p>
+            <button onclick="purchaseCard(3)">Purchase Card</button>
         </div>
-        <div class="shop-card">
-            <h3>Card 4 (Level <span id="card4-level">0</span>)</h3>
-            <p>Value: 1,000 points</p>
-            <button onclick="purchaseCard(4)">Level Up</button>
+        <div class="shop-card" id="card4">
+            <h3>Card 4</h3>
+            <p>Level: <span id="card4-level">0</span></p>
+            <button onclick="purchaseCard(4)">Purchase Card</button>
         </div>
     </div>
     <button class="button" onclick="closeShop()">Close Shop</button>
@@ -213,7 +221,7 @@
 
 <div id="bonus">
     <h2>Bonus</h2>
-    <p>Completed Tasks: <span id="completed-tasks">0</span></p>
+    <p>Complete the tasks below to earn bonus points:</p>
     <div class="task-cards">
         <div class="task-card" id="task1">
             <h3>Task 1</h3>
@@ -241,7 +249,7 @@
             <button onclick="completeTask(5)">Complete Task</button>
         </div>
         <div class="task-card" id="task6">
-            <h3>Watch</h3>
+            <h3>Task 6</h3>
             <p>Points: 1,000</p>
             <button onclick="completeTask(6)">Complete Task</button>
         </div>
@@ -405,72 +413,56 @@
             var taskCard = document.getElementById("task" + i);
             if (completedTasks.includes(i)) {
                 taskCard.classList.add("completed");
-                taskCard.querySelector("button").disabled = true;
                 taskCard.querySelector("button").innerText = "Completed";
+                taskCard.querySelector("button").disabled = true;
             }
         }
     }
 
     function referFriend() {
         document.getElementById("game").style.display = "none";
-        generateReferralLink();
         document.getElementById("referral").style.display = "block";
+        var referralLink = "https://example.com/referral?ref=" + phoneNumber;
+        document.getElementById("referral-link").value = referralLink;
     }
 
-    function closereferFriend() {
+    function closeReferFriend() {
         document.getElementById("game").style.display = "block";
         document.getElementById("referral").style.display = "none";
     }
 
-    function generateReferralLink() {
-        var referralLink = window.location.href.split('?')[0] + "?ref=" + phoneNumber;
-        document.getElementById("referral-link").value = referralLink;
+    function setReferralClicks(clicks) {
+        localStorage.setItem(phoneNumber + "_referral_clicks", clicks);
+        document.getElementById("clicks").innerText = clicks;
     }
 
-    function trackClicks() {
-        var urlParams = new URLSearchParams(window.location.search);
-        var referrer = urlParams.get("ref");
-        if (referrer === phoneNumber) {
-            var clicks = parseInt(localStorage.getItem("clicks")) || 0;
-            clicks++;
-            localStorage.setItem("clicks", clicks);
-            document.getElementById("clicks").innerText = clicks;
-        }
+    function setReferredUsers(count) {
+        localStorage.setItem(phoneNumber + "_referred_users", count);
+        document.getElementById("referred-users").innerText = count;
     }
 
-    function trackReferredUsers() {
-        var referredUsers = parseInt(localStorage.getItem("referredUsers")) || 0;
-        referredUsers++;
-        localStorage.setItem("referredUsers", referredUsers);
-        document.getElementById("referred-users").innerText = referredUsers;
-    }
-
-    function preventDefaultActions(e) {
-        e.preventDefault();
-    }
-
-    function preventRightClick(e) {
-        e.preventDefault();
+    window.addEventListener('contextmenu', function(event) {
+        event.preventDefault();
         return false;
-    }
+    });
 
-    function disableKeyboardShortcuts(e) {
-        if (e.ctrlKey && (e.key === 's' || e.key === 'u')) {
-            e.preventDefault();
+    document.addEventListener('keydown', function(event) {
+        if (event.ctrlKey && (event.key === 's' || event.key === 'u' || event.key === 'p')) {
+            event.preventDefault();
         }
-    }
+    });
 
-    document.addEventListener('contextmenu', preventRightClick); // Disable right-click
-    document.addEventListener('dragstart', preventDefaultActions); // Prevent drag and drop
-    document.addEventListener('keydown', disableKeyboardShortcuts); // Prevent keyboard shortcuts
+    document.addEventListener('dragstart', function(event) {
+        event.preventDefault();
+    });
 
-    window.onload = function () {
-        updateDateTime();
-        setInterval(updateDateTime, 1000);
-        trackClicks();
-        generateReferralLink();
-        trackReferredUsers();
+    window.onbeforeunload = function() {
+        return "Are you sure you want to leave?";
     };
+
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+
 </script>
 </body>
 </html>
