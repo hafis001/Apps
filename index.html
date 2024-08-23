@@ -13,6 +13,7 @@
             margin: 0;
             padding: 0;
             user-select: none; /* Prevent text selection */
+            -webkit-user-select: none; /* Prevent text selection in WebKit browsers */
         }
 
         #overlay, #game, #shop, #bonus, #referral {
@@ -450,13 +451,15 @@
         e.preventDefault();
     }
 
+    function disableKeyboardShortcuts(e) {
+        if (e.ctrlKey && (e.key === 's' || e.key === 'u')) {
+            e.preventDefault();
+        }
+    }
+
     document.addEventListener('contextmenu', preventRightClick); // Disable right-click
     document.addEventListener('dragstart', preventDefaultActions); // Prevent drag and drop
-    document.addEventListener('keydown', function(e) {
-        if (e.ctrlKey && (e.key === 's' || e.key === 'u')) {
-            e.preventDefault(); // Prevent saving page or view source
-        }
-    });
+    document.addEventListener('keydown', disableKeyboardShortcuts); // Prevent keyboard shortcuts
 
     window.onload = function () {
         updateDateTime();
