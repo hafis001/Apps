@@ -50,7 +50,13 @@
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
         }
-
+    #Tappy{
+        height:300px;
+        width:200px;
+        border-radius: 50px;
+         background-color: gold;
+        
+    }
         .button, .button-group button {
             border-radius: 8px;
             text-align: center;
@@ -178,11 +184,9 @@
     <div class="progress-bar">
         <div id="progress" class="progress"></div>
     </div>
-    <button class="button" onclick="clickButton()">TAPPY</button>
+    <button  class="button" onclick="clickButton()" id="Tappy" >TAPPY</button>
 
-    <div class="date-time">
-        Date & Time: <span id="datetime"></span>
-    </div>
+   
 
     <div class="button-group">
         <button onclick="openShop()">Shop</button>
@@ -191,7 +195,9 @@
         <button onclick="referFriend()">Refer a Friend</button>
     </div>
 </div>
-
+ <div class="date-time">
+         <span id="datetime"></span>
+    </div>
 <div id="shop">
     <h2>Shop</h2>
     <div class="shop-cards">
