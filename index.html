@@ -15,7 +15,7 @@
             user-select: none; /* Prevent text selection */
         }
 
-        #overlay, #game, #shop, #bonus, #referral {
+        #overlay, #game, #shop, #bonus, #referral, #leaderboard {
             display: none;
         }
 
@@ -44,6 +44,12 @@
             width: 200px;
             border-radius: 100px;
             background-color: gold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #Tappy:active {
+            transform: scale(0.9);
         }
 
         .button, .button-group button {
@@ -118,7 +124,7 @@
             margin-top: 20px;
         }
 
-        .shop-card, .task-card {
+        .shop-card, .task-card, .leaderboard-card {
             border: 1px solid #ddd;
             border-radius: 10px;
             padding: 20px;
@@ -128,7 +134,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        .shop-card h3, .task-card h3 {
+        .shop-card h3, .task-card h3, .leaderboard-card h3 {
             margin-bottom: 10px;
             font-size: 18px;
         }
@@ -151,6 +157,31 @@
         .task-card.completed {
             background-color: #e0ffe0;
             border: 1px solid #4caf50;
+        }
+
+        #leaderboard {
+            text-align: left;
+            padding: 20px;
+        }
+
+        #leaderboard table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #leaderboard th, #leaderboard td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        #leaderboard th {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        #leaderboard tr:nth-child(even) {
+            background-color: #f2f2f2;
         }
     </style>
 </head>
@@ -179,6 +210,7 @@
         <button onclick="withdraw()">Withdraw</button>
         <button onclick="getBonus()">Bonus</button>
         <button onclick="referFriend()">Refer a Friend</button>
+        <button onclick="openLeaderboard()">Leaderboard</button>
     </div>
 </div>
 
@@ -190,24 +222,24 @@
     <h2>Shop</h2>
     <div class="shop-cards">
         <div class="shop-card" id="card1">
-            <h3>Card 1</h3>
-            <p>Level: <span id="card1-level">0</span></p>
-            <button onclick="purchaseCard(1)">Purchase Card</button>
+            <h3>Card 1 - +1 Point/Click</h3>
+            <p>Cost: 100 Points</p>
+            <button onclick="purchaseCard(1, 1)">Purchase</button>
         </div>
         <div class="shop-card" id="card2">
-            <h3>Card 2</h3>
-            <p>Level: <span id="card2-level">0</span></p>
-            <button onclick="purchaseCard(2)">Purchase Card</button>
+            <h3>Card 2 - +5 Points/Click</h3>
+            <p>Cost: 500 Points</p>
+            <button onclick="purchaseCard(2, 5)">Purchase</button>
         </div>
         <div class="shop-card" id="card3">
-            <h3>Card 3</h3>
-            <p>Level: <span id="card3-level">0</span></p>
-            <button onclick="purchaseCard(3)">Purchase Card</button>
+            <h3>Card 3 - +10 Points/Click</h3>
+            <p>Cost: 1000 Points</p>
+            <button onclick="purchaseCard(3, 10)">Purchase</button>
         </div>
         <div class="shop-card" id="card4">
-            <h3>Card 4</h3>
-            <p>Level: <span id="card4-level">0</span></p>
-            <button onclick="purchaseCard(4)">Purchase Card</button>
+            <h3>Card 4 - +50 Points/Click</h3>
+            <p>Cost: 5000 Points</p>
+            <button onclick="purchaseCard(4, 50)">Purchase</button>
         </div>
     </div>
     <button class="button" onclick="closeShop()">Close Shop</button>
@@ -215,37 +247,21 @@
 
 <div id="bonus">
     <h2>Bonus</h2>
-    <p>Complete the tasks below to earn bonus points:</p>
     <div class="task-cards">
         <div class="task-card" id="task1">
-            <h3>Task 1</h3>
-            <p>Points: 1,000</p>
+            <h3>Task 1 - Click 100 times</h3>
+            <p>Reward: 1000 Points</p>
             <button onclick="completeTask(1)">Complete Task</button>
         </div>
         <div class="task-card" id="task2">
-            <h3>Task 2</h3>
-            <p>Points: 1,000</p>
+            <h3>Task 2 - Reach Level 5</h3>
+            <p>Reward: 2000 Points</p>
             <button onclick="completeTask(2)">Complete Task</button>
         </div>
         <div class="task-card" id="task3">
-            <h3>Task 3</h3>
-            <p>Points: 1,000</p>
+            <h3>Task 3 - Click 500 times</h3>
+            <p>Reward: 5000 Points</p>
             <button onclick="completeTask(3)">Complete Task</button>
-        </div>
-        <div class="task-card" id="task4">
-            <h3>Task 4</h3>
-            <p>Points: 1,000</p>
-            <button onclick="completeTask(4)">Complete Task</button>
-        </div>
-        <div class="task-card" id="task5">
-            <h3>Task 5</h3>
-            <p>Points: 1,000</p>
-            <button onclick="completeTask(5)">Complete Task</button>
-        </div>
-        <div class="task-card" id="task6">
-            <h3>Task 6</h3>
-            <p>Points: 1,000</p>
-            <button onclick="completeTask(6)">Complete Task</button>
         </div>
     </div>
     <button class="button" onclick="closeBonus()">Close Bonus</button>
@@ -261,12 +277,29 @@
     <button class="button" onclick="closeReferral()">Close Referral</button>
 </div>
 
+<div id="leaderboard">
+    <h2>Leaderboard</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Player</th>
+                <th>Points</th>
+            </tr>
+        </thead>
+        <tbody id="leaderboard-body">
+            <!-- Leaderboard entries will be populated here -->
+        </tbody>
+    </table>
+    <button class="button" onclick="closeLeaderboard()">Close Leaderboard</button>
+</div>
+
 <script>
     let points = 0;
     let level = 1;
     const progressIncrement = 10; // Points needed to level up
+    const upgradeCosts = [100, 500, 1000, 5000]; // Example upgrade costs
 
-    // Initialize game state from localStorage
     function loadGameState() {
         const savedPoints = localStorage.getItem('points');
         const savedLevel = localStorage.getItem('level');
@@ -286,7 +319,7 @@
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('game').style.display = 'block';
             updateDateTime();
-            loadGameState(); // Load saved game state
+            loadGameState();
         }
     }
 
@@ -296,7 +329,7 @@
             levelUp();
         }
         updateUI();
-        saveGameState(); // Save game state after update
+        saveGameState();
     }
 
     function updateUI() {
@@ -319,13 +352,20 @@
         document.getElementById('shop').style.display = 'none';
     }
 
-    function purchaseCard(cardNumber) {
-        // Example function for purchasing a card
-        alert(`Card ${cardNumber} purchased!`);
+    function purchaseCard(cardNumber, pointsPerClick) {
+        const cost = upgradeCosts[cardNumber - 1];
+        if (points >= cost) {
+            points -= cost;
+            // Apply the upgrade logic here (e.g., increase points per click)
+            alert(`Card ${cardNumber} purchased! Now you earn ${pointsPerClick} points per click.`);
+            updateUI();
+            saveGameState();
+        } else {
+            alert('Not enough points to purchase this card.');
+        }
     }
 
     function withdraw() {
-        // Example function for withdrawing
         alert('Withdrawal feature not implemented.');
     }
 
@@ -338,12 +378,12 @@
     }
 
     function completeTask(taskNumber) {
-        // Example function for completing a task
-        alert(`Task ${taskNumber} completed!`);
         // Add bonus points or other logic here
-        points += 1000; // Example bonus points
+        const rewards = [1000, 2000, 5000];
+        points += rewards[taskNumber - 1];
+        document.getElementById(`task${taskNumber}`).classList.add('completed');
         updateUI();
-        saveGameState(); // Save game state after task completion
+        saveGameState();
     }
 
     function referFriend() {
@@ -368,9 +408,35 @@
         document.getElementById('datetime').textContent = now.toLocaleString('en-US', options);
     }
 
-    setInterval(updateDateTime, 1000); // Update time every second
+    function openLeaderboard() {
+        document.getElementById('leaderboard').style.display = 'block';
+        populateLeaderboard();
+    }
 
-    window.onload = loadGameState; // Load game state when page loads
+    function closeLeaderboard() {
+        document.getElementById('leaderboard').style.display = 'none';
+    }
+
+    function populateLeaderboard() {
+        // Example data - you would replace this with actual leaderboard data
+        const leaderboardData = [
+            { rank: 1, player: 'Player1', points: 5000 },
+            { rank: 2, player: 'Player2', points: 4000 },
+            { rank: 3, player: 'Player3', points: 3000 },
+        ];
+
+        const tbody = document.getElementById('leaderboard-body');
+        tbody.innerHTML = '';
+
+        leaderboardData.forEach(entry => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${entry.rank}</td><td>${entry.player}</td><td>${entry.points}</td>`;
+            tbody.appendChild(tr);
+        });
+    }
+
+    setInterval(updateDateTime, 1000);
+    window.onload = loadGameState;
 </script>
 </body>
 </html>
