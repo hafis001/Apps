@@ -6,10 +6,10 @@
     <title>TappyCoin</title>
     <style>
         body {
-            background-color: #282c34;
-            color: #f1c40f;
+            background-color: #f0f8ff;
+            color: #333;
             text-align: center;
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
         }
@@ -24,7 +24,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.5);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -32,64 +32,65 @@
         }
 
         #overlay-content {
-            background-color: #1c1c1c;
+            background-color: #ffffff;
             padding: 30px;
             border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
         }
 
         .button, .button-group button {
-            border-radius: 5px;
+            border-radius: 8px;
             text-align: center;
-            background-color: #27ae60;
+            background-color: #4caf50;
             color: white;
             cursor: pointer;
-            padding: 10px 20px;
+            padding: 12px 24px;
             margin: 10px;
-            font-size: 16px;
+            font-size: 18px;
             border: none;
             transition: background-color 0.3s;
         }
 
         .button:hover, .button-group button:hover {
-            background-color: #2ecc71;
+            background-color: #45a049;
         }
 
         input[type="tel"], input[type="text"] {
             width: 100%;
-            max-width: 300px;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+            max-width: 320px;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
             font-size: 16px;
             margin-bottom: 10px;
         }
 
         input[type="submit"] {
-            padding: 10px 20px;
-            background-color: #27ae60;
+            padding: 12px 24px;
+            background-color: #4caf50;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
             transition: background-color 0.3s;
         }
 
         input[type="submit"]:hover {
-            background-color: #2ecc71;
+            background-color: #45a049;
         }
 
         .progress-bar {
             width: 80%;
             margin: 20px auto;
-            background-color: #ccc;
+            background-color: #ddd;
             border-radius: 10px;
             overflow: hidden;
         }
 
         .progress {
             height: 20px;
-            background-color: #27ae60;
+            background-color: #4caf50;
             border-radius: 10px;
             transition: width 0.5s ease-in-out;
         }
@@ -110,26 +111,33 @@
         }
 
         .shop-card, .task-card {
-            border: 1px solid #444;
+            border: 1px solid #ddd;
             border-radius: 10px;
             padding: 20px;
-            width: 200px;
-            background-color: #1c1c1c;
-            color: #f1c40f;
+            width: 220px;
+            background-color: #ffffff;
+            color: #333;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .shop-card h3, .task-card h3 {
             margin-bottom: 10px;
+            font-size: 18px;
         }
 
         .shop-card button, .task-card button {
             margin-top: 10px;
-            background-color: #27ae60;
+            background-color: #4caf50;
             color: white;
         }
 
         .shop-card button:hover, .task-card button:hover {
-            background-color: #2ecc71;
+            background-color: #45a049;
+        }
+
+        .date-time {
+            font-size: 18px;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -153,6 +161,10 @@
         <div id="progress" class="progress"></div>
     </div>
     <button class="button" onclick="clickButton()">TAPPY</button>
+
+    <div class="date-time">
+        Date & Time: <span id="datetime"></span>
+    </div>
 
     <div class="button-group">
         <button onclick="openShop()">Shop</button>
@@ -251,11 +263,18 @@
         initializeGame();
     }
 
+    function updateDateTime() {
+        var now = new Date();
+        var dateTimeString = now.toLocaleString();
+        document.getElementById("datetime").innerText = dateTimeString;
+    }
+
     var phoneNumber = localStorage.getItem("phoneNumber");
 
     if (phoneNumber) {
         document.getElementById("overlay").style.display = "none";
         document.getElementById("game").style.display = "block";
+        updateDateTime();
     }
 
     var globalPoints = parseInt(localStorage.getItem("points")) || 0;
@@ -395,6 +414,8 @@
     }
 
     window.onload = function () {
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
         trackClicks();
         generateReferralLink();
         trackReferredUsers();
