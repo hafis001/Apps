@@ -12,6 +12,7 @@
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
+            user-select: none; /* Prevent text selection */
         }
 
         #overlay, #game, #shop, #bonus, #referral {
@@ -139,6 +140,11 @@
             font-size: 18px;
             margin-top: 10px;
         }
+
+        .task-card.completed {
+            background-color: #e0ffe0;
+            border: 1px solid #4caf50;
+        }
     </style>
 </head>
 <body>
@@ -206,40 +212,40 @@
     <h2>Bonus</h2>
     <p>Completed Tasks: <span id="completed-tasks">0</span></p>
     <div class="task-cards">
-        <div class="task-card">
+        <div class="task-card" id="task1">
             <h3>Task 1</h3>
             <p>Points: 1,000</p>
-            <button onclick="completeTask()">Complete Task</button>
+            <button onclick="completeTask(1)">Complete Task</button>
         </div>
-        <div class="task-card">
+        <div class="task-card" id="task2">
             <h3>Task 2</h3>
             <p>Points: 1,000</p>
-            <button onclick="completeTask()">Complete Task</button>
+            <button onclick="completeTask(2)">Complete Task</button>
         </div>
-        <div class="task-card">
+        <div class="task-card" id="task3">
             <h3>Task 3</h3>
             <p>Points: 1,000</p>
-            <button onclick="completeTask()">Complete Task</button>
+            <button onclick="completeTask(3)">Complete Task</button>
         </div>
-        <div class="task-card">
+        <div class="task-card" id="task4">
             <h3>Task 4</h3>
             <p>Points: 1,000</p>
-            <button onclick="completeTask()">Verify</button>
+            <button onclick="completeTask(4)">Complete Task</button>
         </div>
-        <div class="task-card">
+        <div class="task-card" id="task5">
             <h3>Task 5</h3>
             <p>Points: 1,000</p>
-            <button onclick="completeTask()">Verify</button>
+            <button onclick="completeTask(5)">Complete Task</button>
         </div>
-        <div class="task-card">
+        <div class="task-card" id="task6">
             <h3>Watch</h3>
             <p>Points: 1,000</p>
-            <button onclick="completeTask()">Complete Task</button>
+            <button onclick="completeTask(6)">Complete Task</button>
         </div>
-        <div class="task-card">
-            <h3>Subscribe</h3>
+        <div class="task-card" id="task7">
+            <h3>Install App</h3>
             <p>Points: 1,000</p>
-            <button onclick="completeTask()">Verify</button>
+            <button onclick="completeTask(7)">Complete Task</button>
         </div>
     </div>
     <button class="button" onclick="closeBonus()">Close Bonus</button>
@@ -247,7 +253,7 @@
 
 <div id="referral">
     <h2>Refer a Friend</h2>
-    <p>Referral Link:</p>
+    <p>Share this link to refer a friend:</p>
     <input type="text" id="referral-link" readonly>
     <p>Clicks: <span id="clicks">0</span></p>
     <p>Referred Users: <span id="referred-users">0</span></p>
@@ -284,6 +290,7 @@
     var level = parseInt(localStorage.getItem(phoneNumber + "_level")) || 1;
 
     updateDisplay();
+    updateTaskStatus();
 
     function clickButton() {
         points++;
@@ -369,14 +376,36 @@
         document.getElementById("bonus").style.display = "none";
     }
 
-    function completeTask() {
-        alert("Task completed! You've earned 1,000 points.");
-        points += 1000;
-        globalPoints += 1000;
-        updateDisplay();
-        localStorage.setItem("points", globalPoints);
-        localStorage.setItem(phoneNumber + "_points", points);
-        closeBonus();
+    function completeTask(taskId) {
+        var completedTasks = JSON.parse(localStorage.getItem(phoneNumber + "_completedTasks")) || [];
+        if (!completedTasks.includes(taskId)) {
+            completedTasks.push(taskId);
+            localStorage.setItem(phoneNumber + "_completedTasks", JSON.stringify(completedTasks));
+            points += 1000;
+            globalPoints += 1000;
+            updateDisplay();
+            localStorage.setItem("points", globalPoints);
+            localStorage.setItem(phoneNumber + "_points", points);
+            updateTaskStatus();
+            alert("Task " + taskId + " completed! You've earned 1,000 points.");
+        } else {
+            alert("Task " + taskId + " is already completed!");
+        }
+    }
+
+    function updateTaskStatus() {
+        var completedTasks = JSON.parse(localStorage.getItem(phoneNumber + "_completedTasks")) || [];
+        document.getElementById("completed-tasks").innerText = completedTasks.length;
+
+        // Highlight completed tasks
+        for (var i = 1; i <= 7; i++) {
+            var taskCard = document.getElementById("task" + i);
+            if (completedTasks.includes(i)) {
+                taskCard.classList.add("completed");
+                taskCard.querySelector("button").disabled = true;
+                taskCard.querySelector("button").innerText = "Completed";
+            }
+        }
     }
 
     function referFriend() {
@@ -412,6 +441,22 @@
         localStorage.setItem("referredUsers", referredUsers);
         document.getElementById("referred-users").innerText = referredUsers;
     }
+
+    function preventDefaultActions(e) {
+        e.preventDefault();
+    }
+
+    function preventRightClick(e) {
+        e.preventDefault();
+    }
+
+    document.addEventListener('contextmenu', preventRightClick); // Disable right-click
+    document.addEventListener('dragstart', preventDefaultActions); // Prevent drag and drop
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && (e.key === 's' || e.key === 'u')) {
+            e.preventDefault(); // Prevent saving page or view source
+        }
+    });
 
     window.onload = function () {
         updateDateTime();
