@@ -318,6 +318,7 @@
     let progressGoal = 100; // Points needed to level up
     let clickValue = 1; // Initial click value
     let tasksCompleted = [false, false, false];
+    let dailyBonusClaimed = false; // Track if daily bonus has been claimed
 
     function startGame(event) {
         event.preventDefault(); // Prevent the default form submission
@@ -372,16 +373,20 @@
     }
 
     function getBonus() {
-        // Bonus logic here
-        showDialog('You received a bonus of 500 points!');
-        points += 500;
-        document.getElementById('points').innerText = points;
+        if (!dailyBonusClaimed) {
+            dailyBonusClaimed = true;
+            points += 500;
+            document.getElementById('points').innerText = points;
+            showDialog('You received a bonus of 500 points!');
+        } else {
+            showDialog('You have already claimed your daily bonus.');
+        }
     }
 
     function referFriend() {
-        showDialog('Thanks for referring a friend! You received 100 points!');
         points += 100;
         document.getElementById('points').innerText = points;
+        showDialog('Thanks for referring a friend! You received 100 points!');
     }
 
     function openLeaderboard() {
@@ -419,9 +424,8 @@
     }
 
     // To add more functionality, you can implement timers, progress tracking, etc.
-
 </script>
- <script>
+<script>
         // Disable right-click
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
@@ -461,5 +465,6 @@
             });
         });
     </script>
+
 </body>
 </html>
