@@ -5,6 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TappyCoin</title>
     <style>
+  /* Prevent text selection */
+        body {
+            user-select: none; /* Standard syntax */
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+        }
+        /* Prevent dragging of images */
+        img {
+            pointer-events: none;
+        }
+        /* Hide elements when right-clicked */
+        .no-save img {
+            pointer-events: none;
+        }
+        /* Example watermark */
+        .watermarked {
+            position: relative;
+            display: inline-block;
+        }
+        .watermarked::after {
+            content: '© YourSite';
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            pointer-events: none;
+        }
+        /* Obfuscated text */
+        .obfuscated {
+            color: transparent;
+            background-color: transparent;
+        }
         body {
             background-color: #f0f8ff;
             color: #333;
@@ -14,11 +48,9 @@
             padding: 0;
             user-select: none;
         }
-
         #overlay, #game, #shop, #bonus, #referral, #leaderboard, #dialog {
             display: none;
         }
-
         #overlay {
             position: fixed;
             top: 0;
@@ -31,14 +63,12 @@
             align-items: center;
             z-index: 1000;
         }
-
         #overlay-content {
             background-color: #ffffff;
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
         }
-
         #Tappy {
             height: 200px;
             width: 200px;
@@ -47,11 +77,9 @@
             cursor: pointer;
             transition: transform 0.2s;
         }
-
         #Tappy:active {
             transform: scale(0.9);
         }
-
         .button, .button-group button {
             border-radius: 8px;
             text-align: center;
@@ -64,11 +92,9 @@
             border: none;
             transition: background-color 0.3s;
         }
-
         .button:hover, .button-group button:hover {
             background-color: #45a049;
         }
-
         input[type="tel"], input[type="text"] {
             width: 100%;
             max-width: 320px;
@@ -78,7 +104,6 @@
             font-size: 16px;
             margin-bottom: 10px;
         }
-
         input[type="submit"] {
             padding: 12px 24px;
             background-color: #4caf50;
@@ -89,11 +114,9 @@
             font-size: 18px;
             transition: background-color 0.3s;
         }
-
         input[type="submit"]:hover {
             background-color: #45a049;
         }
-
         .progress-bar {
             width: 80%;
             margin: 20px auto;
@@ -101,21 +124,18 @@
             border-radius: 10px;
             overflow: hidden;
         }
-
         .progress {
             height: 20px;
             background-color: #4caf50;
             border-radius: 10px;
             transition: width 0.5s ease-in-out;
         }
-
         .button-group {
             margin-top: 20px;
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
         }
-
         .shop-cards, .task-cards {
             display: flex;
             flex-wrap: wrap;
@@ -123,7 +143,6 @@
             gap: 20px;
             margin-top: 20px;
         }
-
         .shop-card, .task-card, .leaderboard-card {
             border: 1px solid #ddd;
             border-radius: 10px;
@@ -133,57 +152,34 @@
             color: #333;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
         .shop-card h3, .task-card h3, .leaderboard-card h3 {
             margin-bottom: 10px;
             font-size: 18px;
         }
-
-        .shop-card button, .task-card button {
-            margin-top: 10px;
-            background-color: #4caf50;
-            color: white;
-        }
-
-        .shop-card button:hover, .task-card button:hover {
-            background-color: #45a049;
-        }
-
-        .date-time {
-            font-size: 18px;
-            margin-top: 10px;
-        }
-
         .task-card.completed {
             background-color: #e0ffe0;
             border: 1px solid #4caf50;
         }
-
         #leaderboard {
             text-align: left;
             padding: 20px;
         }
-
         #leaderboard table {
             width: 100%;
             border-collapse: collapse;
         }
-
         #leaderboard th, #leaderboard td {
             border: 1px solid #ddd;
             padding: 10px;
             text-align: center;
         }
-
         #leaderboard th {
             background-color: #4caf50;
             color: white;
         }
-
         #leaderboard tr:nth-child(even) {
             background-color: #f2f2f2;
         }
-
         #dialog {
             position: fixed;
             top: 50%;
@@ -197,7 +193,6 @@
             max-width: 90%;
             width: 300px;
         }
-
         #dialog .close {
             float: right;
             font-size: 20px;
@@ -281,23 +276,13 @@
             <div id="timer-task2" class="timer">Timer: <span id="timer-task2-span">00:00</span></div>
         </div>
         <div class="task-card" id="task3">
-            <h3>Task 3 - Click 500 times</h3>
-            <p>Reward: 5000 Points</p>
+            <h3>Task 3 - Play for 10 minutes</h3>
+            <p>Reward: 3000 Points</p>
             <button onclick="completeTask(3)">Complete Task</button>
             <div id="timer-task3" class="timer">Timer: <span id="timer-task3-span">00:00</span></div>
         </div>
     </div>
     <button class="button" onclick="closeBonus()">Close Bonus</button>
-</div>
-
-<div id="referral">
-    <h2>Refer a Friend</h2>
-    <form id="referral-form" onsubmit="refer(); return false;">
-        <label for="referral-phone">Enter Referral's Phone Number:</label><br>
-        <input type="tel" id="referral-phone" name="referral-phone" pattern="[0-9]{10}" placeholder="Enter referral's phone number" required><br>
-        <input type="submit" value="Refer">
-    </form>
-    <button class="button" onclick="closeReferral()">Close Referral</button>
 </div>
 
 <div id="leaderboard">
@@ -306,12 +291,12 @@
         <thead>
             <tr>
                 <th>Rank</th>
-                <th>Player</th>
+                <th>Name</th>
                 <th>Points</th>
             </tr>
         </thead>
         <tbody id="leaderboard-body">
-            <!-- Leaderboard entries will be populated here -->
+            <!-- Leaderboard data will be dynamically added here -->
         </tbody>
     </table>
     <button class="button" onclick="closeLeaderboard()">Close Leaderboard</button>
@@ -319,75 +304,23 @@
 
 <div id="dialog">
     <span class="close" onclick="closeDialog()">×</span>
-    <p id="dialog-message">Message goes here</p>
+    <h3>Dialog Title</h3>
+    <p>Dialog content goes here.</p>
 </div>
 
 <script>
-    let points = 0;
-    let level = 1;
-    let clickMultiplier = 1;
-    const progressIncrement = 10; // Points needed to level up
-    const upgradeCosts = [100, 500, 1000, 5000]; // Example upgrade costs
-    const taskTimers = [30000, 60000, 90000]; // Example timers for tasks in milliseconds
-    const completedTasks = [];
-
-    function loadGameState() {
-        const savedPoints = localStorage.getItem('points');
-        const savedLevel = localStorage.getItem('level');
-        const savedClickMultiplier = localStorage.getItem('clickMultiplier');
-        const loggedIn = localStorage.getItem('loggedIn');
-        
-        if (!loggedIn) {
-            document.getElementById('overlay').style.display = 'flex';
-        } else {
-            document.getElementById('game').style.display = 'block';
-            if (savedPoints !== null) points = parseInt(savedPoints, 10);
-            if (savedLevel !== null) level = parseInt(savedLevel, 10);
-            if (savedClickMultiplier !== null) clickMultiplier = parseFloat(savedClickMultiplier);
-            updateUI();
-        }
-    }
-
-    function saveGameState() {
-        localStorage.setItem('points', points);
-        localStorage.setItem('level', level);
-        localStorage.setItem('clickMultiplier', clickMultiplier);
-        localStorage.setItem('loggedIn', 'true');
-    }
-
+    // Add your JavaScript logic here
     function startGame() {
         const phone = document.getElementById('phone').value;
-        if (phone) {
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('game').style.display = 'block';
-            loadGameState();
-        }
+        console.log("Game started for:", phone);
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('game').style.display = 'block';
     }
 
     function clickButton() {
-        points += clickMultiplier;
-        if (points % progressIncrement === 0) {
-            levelUp();
-        }
-        updateUI();
-        saveGameState();
-    }
-
-    function updateUI() {
-        document.getElementById('points').textContent = points;
-        document.getElementById('level').textContent = level;
-        const progressPercent = (points % progressIncrement) / progressIncrement * 100;
-        document.getElementById('progress').style.width = progressPercent + '%';
-    }
-
-    function levelUp() {
-        level++;
-        // Adjust difficulty for leveling up
-        if (level % 5 === 0) {
-            // Increase points needed per level
-            progressIncrement += 10;
-        }
-        updateUI();
+        // Increment points logic here
+        let pointsElement = document.getElementById('points');
+        pointsElement.innerText = parseInt(pointsElement.innerText) + 1; // Example logic
     }
 
     function openShop() {
@@ -398,123 +331,89 @@
         document.getElementById('shop').style.display = 'none';
     }
 
-    function purchaseCard(cardNumber, pointsPerClick) {
-        const cost = upgradeCosts[cardNumber - 1];
-        if (points >= cost) {
-            points -= cost;
-            clickMultiplier = pointsPerClick;
-            showDialog(`Card ${cardNumber} purchased! Now you earn ${pointsPerClick} points per click.`);
-            updateUI();
-            saveGameState();
-        } else {
-            showDialog('Not enough points to purchase this card.');
-        }
-    }
-
-    function withdraw() {
-        showDialog('Withdrawal feature not implemented.');
-    }
-
     function getBonus() {
         document.getElementById('bonus').style.display = 'block';
-        startBonusTimers();
     }
 
     function closeBonus() {
         document.getElementById('bonus').style.display = 'none';
     }
 
-    function startBonusTimers() {
-        // Example timers for bonus tasks
-        const timers = [
-            setTimeout(() => updateTaskTimer(1), taskTimers[0]),
-            setTimeout(() => updateTaskTimer(2), taskTimers[1]),
-            setTimeout(() => updateTaskTimer(3), taskTimers[2])
-        ];
-
-        // Function to update task timer
-        function updateTaskTimer(taskNumber) {
-            const taskCard = document.getElementById(`task${taskNumber}`);
-            const timerSpan = document.getElementById(`timer-task${taskNumber}-span`);
-            taskCard.classList.add('completed');
-            timerSpan.textContent = '00:00';
-            showDialog(`Task ${taskNumber} timer completed!`);
-        }
-    }
-
-    function completeTask(taskNumber) {
-        if (!completedTasks.includes(taskNumber)) {
-            const rewards = [1000, 2000, 5000];
-            points += rewards[taskNumber - 1];
-            completedTasks.push(taskNumber);
-            document.getElementById(`task${taskNumber}`).classList.add('completed');
-            updateUI();
-            saveGameState();
-        } else {
-            showDialog('Task already completed.');
-        }
-    }
-
     function referFriend() {
-        document.getElementById('referral').style.display = 'block';
-    }
-
-    function closeReferral() {
-        document.getElementById('referral').style.display = 'none';
-    }
-
-    function refer() {
-        const referralPhone = document.getElementById('referral-phone').value;
-        if (referralPhone) {
-            showDialog(`Referral made to ${referralPhone}!`);
-            document.getElementById('referral').style.display = 'none';
-        }
-    }
-
-    function updateDateTime() {
-        const now = new Date();
-        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
-        document.getElementById('datetime').textContent = now.toLocaleString('en-US', options);
+        alert('Referral link sent!');
     }
 
     function openLeaderboard() {
         document.getElementById('leaderboard').style.display = 'block';
-        populateLeaderboard();
+        // Load leaderboard data here
     }
 
     function closeLeaderboard() {
         document.getElementById('leaderboard').style.display = 'none';
     }
 
-    function populateLeaderboard() {
-        // Example data - you would replace this with actual leaderboard data
-        const leaderboardData = [
-            { rank: 1, player: 'Player1', points: 5000 },
-            { rank: 2, player: 'Player2', points: 4000 },
-            { rank: 3, player: 'Player3', points: 3000 },
-        ];
-
-        const tbody = document.getElementById('leaderboard-body');
-        tbody.innerHTML = '';
-
-        leaderboardData.forEach(entry => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `<td>${entry.rank}</td><td>${entry.player}</td><td>${entry.points}</td>`;
-            tbody.appendChild(tr);
-        });
+    function purchaseCard(cardId, pointsPerClick) {
+        const pointsElement = document.getElementById('points');
+        const currentPoints = parseInt(pointsElement.innerText);
+        const cardCost = [100, 500, 1000, 5000][cardId - 1]; // Example cost array
+        if (currentPoints >= cardCost) {
+            pointsElement.innerText = currentPoints - cardCost;
+            console.log(`Purchased card ${cardId} for ${pointsPerClick} points/click`);
+        } else {
+            alert("Not enough points!");
+        }
     }
 
-    function showDialog(message) {
-        document.getElementById('dialog-message').textContent = message;
-        document.getElementById('dialog').style.display = 'block';
+    function completeTask(taskId) {
+        // Task completion logic here
+        alert(`Task ${taskId} completed!`);
     }
 
     function closeDialog() {
         document.getElementById('dialog').style.display = 'none';
     }
-
-    setInterval(updateDateTime, 1000);
-    window.onload = loadGameState;
+    
+    // Additional game logic goes here
 </script>
+     <script>
+        // Disable right-click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // Disable keyboard shortcuts for saving (e.g., Ctrl+S)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                
+            }
+        });
+
+        // Disable text selection
+        document.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+        });
+
+        // Prevent drag-and-drop
+        document.addEventListener('dragstart', function(e) {
+            e.preventDefault();
+        });
+
+        // Prevent copy-pasting
+        document.addEventListener('copy', function(e) {
+            e.preventDefault();
+            
+        });
+
+        // Prevent image saving using a canvas trick
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = document.querySelectorAll('img');
+            images.forEach(img => {
+                img.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                });
+            });
+        });
+    </script>
 </body>
 </html>
