@@ -5,79 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TappyCoin</title>
     <style>
- /* Prevent text selection */
-        body {
-            user-select: none; /* Standard syntax */
-            -webkit-user-select: none; /* Safari */
-            -moz-user-select: none; /* Firefox */
-            -ms-user-select: none; /* Internet Explorer/Edge */
-        }
-        /* Prevent dragging of images */
-        img {
-            pointer-events: none;
-        }
-        /* Hide elements when right-clicked */
-        .no-save img {
-            pointer-events: none;
-        }
-        /* Example watermark */
-        .watermarked {
-            position: relative;
-            display: inline-block;
-        }
-        .watermarked::after {
-            content: '© YourSite';
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.5);
-            pointer-events: none;
-        }
-        /* Obfuscated text */
-        .obfuscated {
-            color: transparent;
-            background-color: transparent;
-        }
-
+        /* Global Styles */
         body {
             background-color: #f0f8ff;
             color: #333;
-            text-align: center;
             font-family: 'Arial', sans-serif;
+            text-align: center;
             margin: 0;
             padding: 0;
+            user-select: none; /* Disable text selection */
+        }
+
+        h1, h2 {
+            font-size: 2rem;
+        }
+
+        /* Prevent text selection */
+        body, input, button {
             user-select: none;
         }
 
-        #overlay, #game, #shop, #bonus, #referral, #leaderboard, #dialog {
-            display: none;
-        }
-
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        #overlay-content {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-        }
-
+        /* Tappy Coin Button */
         #Tappy {
-            height: 200px;
             width: 200px;
-            border-radius: 100px;
+            height: 200px;
+            border-radius: 50%;
             background-color: gold;
             cursor: pointer;
             transition: transform 0.2s;
@@ -87,9 +39,9 @@
             transform: scale(0.9);
         }
 
+        /* Button Styles */
         .button, .button-group button {
             border-radius: 8px;
-            text-align: center;
             background-color: #4caf50;
             color: white;
             cursor: pointer;
@@ -104,6 +56,7 @@
             background-color: #45a049;
         }
 
+        /* Form and Input Styles */
         input[type="tel"], input[type="text"] {
             width: 100%;
             max-width: 320px;
@@ -114,21 +67,11 @@
             margin-bottom: 10px;
         }
 
-        input[type="submit"] {
-            padding: 12px 24px;
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 18px;
-            transition: background-color 0.3s;
-        }
-
         input[type="submit"]:hover {
             background-color: #45a049;
         }
 
+        /* Progress Bar Styles */
         .progress-bar {
             width: 80%;
             margin: 20px auto;
@@ -144,13 +87,7 @@
             transition: width 0.5s ease-in-out;
         }
 
-        .button-group {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
+        /* Shop and Task Cards */
         .shop-cards, .task-cards {
             display: flex;
             flex-wrap: wrap;
@@ -159,21 +96,38 @@
             margin-top: 20px;
         }
 
-        .shop-card, .task-card, .leaderboard-card {
+        .shop-card, .task-card {
             border: 1px solid #ddd;
             border-radius: 10px;
             padding: 20px;
             width: 220px;
-            background-color: #ffffff;
+            background-color: #fff;
             color: #333;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        #leaderboard {
-            text-align: left;
+        /* Modal and Dialog */
+        #dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
             padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            width: 300px;
+            display: none;
         }
 
+        #dialog .close {
+            float: right;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* Leaderboard Styles */
         #leaderboard table {
             width: 100%;
             border-collapse: collapse;
@@ -190,33 +144,54 @@
             color: white;
         }
 
-        #dialog {
+        /* Overlay Styles */
+        #overlay {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
             z-index: 1000;
-            max-width: 90%;
-            width: 300px;
-            display: none; /* Initially hidden */
         }
 
-        #dialog .close {
-            float: right;
-            font-size: 20px;
-            cursor: pointer;
+        #overlay-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
         }
+
+        /* Responsiveness */
+        @media (max-width: 600px) {
+            .button, .button-group button {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+
+            #Tappy {
+                width: 150px;
+                height: 150px;
+            }
+
+            .shop-card, .task-card {
+                width: 100%;
+                max-width: 280px;
+            }
+        }
+
     </style>
 </head>
 <body>
+
+<!-- Overlay for initial form -->
 <div id="overlay">
     <div id="overlay-content">
         <h2>Welcome to TappyCoin!</h2>
-        <form id="start-form" onsubmit="startGame(event);">
+        <form id="start-form" onsubmit="startGame(event)">
             <label for="phone">Enter Phone Number:</label><br>
             <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" placeholder="Enter your phone number" required><br>
             <input type="submit" value="Start Game">
@@ -224,42 +199,43 @@
     </div>
 </div>
 
-<div id="game">
+<!-- Main Game -->
+<div id="game" style="display:none;">
     <h1>TappyCoin</h1>
     <p>Points: <span id="points">0</span></p>
-    <strong><p>Level: <span id="level">1</span></p></strong>
+    <p><strong>Level: <span id="level">1</span></strong></p>
     <div class="progress-bar">
         <div id="progress" class="progress"></div>
     </div>
     <button class="button" onclick="clickButton()" id="Tappy">TAPPY</button>
     <div class="button-group">
         <button onclick="openShop()">Shop</button>
-        <button onclick="withdraw()">Withdraw</button>
         <button onclick="getBonus()">Bonus</button>
         <button onclick="referFriend()">Refer a Friend</button>
         <button onclick="openLeaderboard()">Leaderboard</button>
     </div>
 </div>
 
-<div id="shop">
+<!-- Shop Modal -->
+<div id="shop" style="display:none;">
     <h2>Shop</h2>
     <div class="shop-cards">
-        <div class="shop-card" id="card1">
+        <div class="shop-card">
             <h3>Card 1 - +1 Point/Click</h3>
             <p>Cost: 100 Points</p>
             <button onclick="purchaseCard(1, 1)">Purchase</button>
         </div>
-        <div class="shop-card" id="card2">
+        <div class="shop-card">
             <h3>Card 2 - +5 Points/Click</h3>
             <p>Cost: 500 Points</p>
             <button onclick="purchaseCard(2, 5)">Purchase</button>
         </div>
-        <div class="shop-card" id="card3">
+        <div class="shop-card">
             <h3>Card 3 - +10 Points/Click</h3>
             <p>Cost: 1000 Points</p>
             <button onclick="purchaseCard(3, 10)">Purchase</button>
         </div>
-        <div class="shop-card" id="card4">
+        <div class="shop-card">
             <h3>Card 4 - +50 Points/Click</h3>
             <p>Cost: 5000 Points</p>
             <button onclick="purchaseCard(4, 50)">Purchase</button>
@@ -268,62 +244,43 @@
     <button class="button" onclick="closeShop()">Close Shop</button>
 </div>
 
-<div id="bonus">
-    <h2>Bonus</h2>
-    <div class="task-cards">
-        <div class="task-card" id="task1">
-            <h3>Task 1 - Click 100 times</h3>
-            <p>Reward: 1000 Points</p>
-            <button onclick="completeTask(1)">Complete Task</button>
-            <div id="timer-task1" class="timer">Timer: <span id="timer-task1-span">00:00</span></div>
-        </div>
-        <div class="task-card" id="task2">
-            <h3>Task 2 - Reach Level 5</h3>
-            <p>Reward: 2000 Points</p>
-            <button onclick="completeTask(2)">Complete Task</button>
-            <div id="timer-task2" class="timer">Timer: <span id="timer-task2-span">00:00</span></div>
-        </div>
-        <div class="task-card" id="task3">
-            <h3>Task 3 - Play for 10 minutes</h3>
-            <p>Reward: 3000 Points</p>
-            <button onclick="completeTask(3)">Complete Task</button>
-            <div id="timer-task3" class="timer">Timer: <span id="timer-task3-span">00:00</span></div>
-        </div>
-    </div>
-    <button class="button" onclick="closeBonus()">Close Bonus</button>
-</div>
-
-<div id="leaderboard">
+<!-- Leaderboard -->
+<div id="leaderboard" style="display:none;">
     <h2>Leaderboard</h2>
     <table>
-        <tr>
-            <th>Rank</th>
-            <th>Player</th>
-            <th>Points</th>
-        </tr>
-        <!-- Leaderboard entries will be dynamically generated -->
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Player</th>
+                <th>Points</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Dynamically populate leaderboard here -->
+        </tbody>
     </table>
     <button class="button" onclick="closeLeaderboard()">Close Leaderboard</button>
 </div>
 
+<!-- Dialog Box -->
 <div id="dialog">
     <span class="close" onclick="closeDialog()">&times;</span>
     <p id="dialog-message"></p>
 </div>
 
 <script>
+    // JavaScript code to handle game mechanics and UI logic
+
     let points = 0;
     let level = 1;
     let progress = 0;
-    let progressGoal = 100; // Points needed to level up
-    let clickValue = 1; // Initial click value
+    let progressGoal = 100;
+    let clickValue = 1;
     let tasksCompleted = [false, false, false];
-    let dailyBonusClaimed = false; // Track if daily bonus has been claimed
+    let dailyBonusClaimed = false;
 
     function startGame(event) {
-        event.preventDefault(); // Prevent the default form submission
-        const phone = document.getElementById('phone').value;
-        console.log("Game started for:", phone);
+        event.preventDefault();
         document.getElementById('overlay').style.display = 'none';
         document.getElementById('game').style.display = 'block';
         updateProgress();
@@ -337,8 +294,7 @@
 
     function updateProgress() {
         document.getElementById('level').innerText = level;
-        let progressBar = document.getElementById('progress');
-        progressBar.style.width = (progress / progressGoal * 100) + '%';
+        document.getElementById('progress').style.width = (progress / progressGoal * 100) + '%';
 
         if (progress >= progressGoal) {
             levelUp();
@@ -347,10 +303,19 @@
 
     function levelUp() {
         level++;
-        progress = 0; // Reset progress
-        progressGoal += 100; // Increase goal for next level
-        clickValue += 1; // Increase click value
+        progress = 0;
+        progressGoal += 100;
+        clickValue += 1;
         showDialog(`Congratulations! You've reached Level ${level}!`);
+    }
+
+    function showDialog(message) {
+        document.getElementById('dialog-message').innerText = message;
+        document.getElementById('dialog').style.display = 'block';
+    }
+
+    function closeDialog() {
+        document.getElementById('dialog').style.display = 'none';
     }
 
     function openShop() {
@@ -391,80 +356,13 @@
 
     function openLeaderboard() {
         document.getElementById('leaderboard').style.display = 'block';
-        // Populate leaderboard logic here
+        // Populate leaderboard dynamically
     }
 
     function closeLeaderboard() {
         document.getElementById('leaderboard').style.display = 'none';
     }
-
-    function showDialog(message) {
-        document.getElementById('dialog-message').innerText = message;
-        document.getElementById('dialog').style.display = 'block';
-    }
-
-    function closeDialog() {
-        document.getElementById('dialog').style.display = 'none';
-    }
-
-    function completeTask(taskId) {
-        if (!tasksCompleted[taskId - 1]) {
-            tasksCompleted[taskId - 1] = true;
-            let reward = 1000 * taskId; // Reward based on task ID
-            points += reward;
-            document.getElementById('points').innerText = points;
-            showDialog(`Task ${taskId} completed! You've earned ${reward} points.`);
-        } else {
-            showDialog(`You have already completed Task ${taskId}.`);
-        }
-    }
-
-    function closeBonus() {
-        document.getElementById('bonus').style.display = 'none';
-    }
-
-    // To add more functionality, you can implement timers, progress tracking, etc.
 </script>
-<script>
-        // Disable right-click
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        });
-
-        // Disable keyboard shortcuts for saving (e.g., Ctrl+S)
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey && e.key === 's') {
-                e.preventDefault();
-                
-            }
-        });
-
-        // Disable text selection
-        document.addEventListener('mousedown', function(e) {
-            e.preventDefault();
-        });
-
-        // Prevent drag-and-drop
-        document.addEventListener('dragstart', function(e) {
-            e.preventDefault();
-        });
-
-        // Prevent copy-pasting
-        document.addEventListener('copy', function(e) {
-            e.preventDefault();
-            
-        });
-
-        // Prevent image saving using a canvas trick
-        document.addEventListener('DOMContentLoaded', function() {
-            const images = document.querySelectorAll('img');
-            images.forEach(img => {
-                img.addEventListener('contextmenu', function(e) {
-                    e.preventDefault();
-                });
-            });
-        });
-    </script>
 
 </body>
 </html>
